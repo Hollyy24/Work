@@ -1,0 +1,34 @@
+{% extends 'base.html'%}
+
+<body>
+{% block content%}
+{% if not logged_in %}
+<form method="post">
+    {{ userlogin.hidden_tag()}}
+    <div>
+        <div class="container login_form">
+            {{ userlogin.name.label}}:
+        </div>
+        <div class="container login_form">
+            {{ userlogin.name(class="form-control-sm")}}
+        </div>
+        <div class="container login_form">
+            {{ userlogin.password.label}}:
+        </div>
+        <div class="container login_form">
+            {{ userlogin.password(class="form-control-sm")}}
+        </div>
+        <div class="container login_form">
+            {{ userlogin.submit(class="btn btn-light")}}
+        </div>
+    </div>
+
+</form>
+{% else %}
+已登入
+
+<a class="nav-link link-light" href="{{ url_for('log_out')}}"><h2>Log Out</h2></a>
+{% endif %}
+{% endblock %}
+</body>
+</html>

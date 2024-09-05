@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ＯＯ圖書管理系統</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body style="background:#85B7C4;padding-bottom:20px ;padding-top:5px; ">
+
+<div class="title">
+    <div class="picture">
+        <div class="col">
+            <img src="static/base.png">
+        </div>
+    </div>
+</div>
+<a href="{{url_for('home') }}"> 首頁 </a>
+<div class="container">
+    <div class="row">
+        {% if logged_in %}
+        <div class="col  tittle-bar">
+            <a href="{{url_for('log_out') }}"> 管理員登出 </a>
+        </div>
+        {% else %}
+        <div class="col  tittle-bar">
+            <a href="{{url_for('login') }}"> 管理員登入 </a>
+        </div>
+        {% endif %}
+        <div class="col  tittle-bar">
+            <a href="{{url_for('research') }}"> 館藏搜尋</a>
+        </div>
+        <div class="col  tittle-bar">
+            <a href="{{url_for('add') }}"> 書籍管理</a>
+        </div>
+        <div class="col  tittle-bar">
+            <a href="{{url_for('borrow') }}"> 借閱書籍 </a>
+        </div>
+        <div class="col  tittle-bar">
+            <a href="{{url_for('student') }}"> 學生資料設定 </a>
+        </div>
+        <div class="col tittle-bar">
+            <a href="{{url_for('usermanage')}}"> 管理員資料設定 </a>
+        </div>
+
+
+    </div>
+</div>
+
+{% block content%}
+{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+</body>
+</html>
