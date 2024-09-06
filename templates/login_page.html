@@ -3,27 +3,18 @@
 <body>
 {% block content%}
 {% if not logged_in %}
-<form method="post">
-    {{ userlogin.hidden_tag()}}
-    <div>
-        <div class="container login_form">
-            {{ userlogin.name.label}}:
-        </div>
-        <div class="container login_form">
+<div id="login_form">
+    <form method="post">
+        {{ userlogin.hidden_tag()}}
+        <p id="login_form_title">管理員登入</p>
+        <p id="login_form_item">{{ userlogin.name.label}}
             {{ userlogin.name(class="form-control-sm")}}
-        </div>
-        <div class="container login_form">
-            {{ userlogin.password.label}}:
-        </div>
-        <div class="container login_form">
+            {{ userlogin.password.label}}
             {{ userlogin.password(class="form-control-sm")}}
-        </div>
-        <div class="container login_form">
-            {{ userlogin.submit(class="btn btn-light")}}
-        </div>
-    </div>
-
-</form>
+            {{ userlogin.submit(class="btn btn-custom")}}
+        </p>
+    </form>
+</div>
 {% else %}
 已登入
 

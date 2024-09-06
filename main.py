@@ -1,7 +1,9 @@
 import os
+
+import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from flask import render_template, redirect, url_for, Flask, flash
+from flask import render_template, redirect, url_for, Flask, flash, request
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -63,10 +65,12 @@ class Books(db.Model):
 class Classuser(UserMixin, db.Model):
     __tablename__ = "班級表單"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    class_: Mapped[str] = mapped_column(String,unique=True)
     name: Mapped[str] = mapped_column(String, unique=True)
     password: Mapped[str] = mapped_column(String)
 
-    def __init__(self, name, password):
+    def __init__(self, class_,name, password):
+        self.class_ = class_
         self.name = name
         self.password = password
 
@@ -88,12 +92,11 @@ class User_login(FlaskForm):
 
 # 手動新增書本表單
 class Addbook(FlaskForm):
-    id = StringField('ＩＤ編號', render_kw={'readonly': True})
-    ISBN = StringField('ISBN碼', validators=[DataRequired()])
+    id = StringField('ＩＤ', render_kw={'readonly': True})
+    ISBN = StringField('ISBN', validators=[DataRequired()])
     bookname = StringField('書名', validators=[DataRequired()])
     author = StringField("作者", validators=[DataRequired()])
-    position = SelectField('位置', choices=[("圖書室", "圖書室"), ("暴龍班", "暴龍班"), ("翼手龍班", "翼手龍班"),
-                                            ("三角龍班", "三角龍班")],
+    position = SelectField('位置', choices=[("圖書室", "圖書室")],
                            validators=[DataRequired()])
     borrower = StringField("借閱人", validators=[Optional()])
     submit = SubmitField("送出")
@@ -101,8 +104,9 @@ class Addbook(FlaskForm):
 
 # 管理員表單
 class Userform(FlaskForm):
-    name = StringField("管理員帳號", validators=[DataRequired()])
-    password = StringField("管理員密碼", validators=[DataRequired()])
+    class_ = StringField("班級名稱",validators=[DataRequired()])
+    name = StringField("班級帳號", validators=[DataRequired()])
+    password = StringField("班級密碼", validators=[DataRequired()])
     submit = SubmitField("送出")
 
 
@@ -142,6 +146,10 @@ class Borrowerbook(FlaskForm):
 
 with app.app_context():
     db.create_all()
+    if not Classuser.query.filter_by().all():
+        admin = Classuser(class_="辦公室",name='admin', password='admin')
+        db.session.add(admin)
+        db.session.commit()
 
 
 # ---------網頁框架------------#
@@ -156,25 +164,26 @@ def home():
 @app.route("/search", methods=["GET", "POST"])
 def research():
     search = Search()
-    books = Books.query.order_by(Books.id).all()
+    page = request.args.get('page', default=1, type=int)
+    books = Books.query.paginate(page=page, per_page=10)
+
     if search.validate_on_submit():
         if search.ways.data == "ISBN碼":
             ISBN = search.string.data
-            print(ISBN)
-            books = Books.query.filter_by(ISBN_number=ISBN).all()
-            print(books)
+            books = Books.query.filter_by(ISBN_number=ISBN).paginate(page=page, per_page=10)
         elif search.ways.data == "書名":
             bookname = search.string.data
-            books = Books.query.filter_by(name=bookname).all()
+            books = Books.query.filter_by(name=bookname).paginate(page=page, per_page=10)
         elif search.ways.data == "作者":
             author = search.string.data
-            books = Books.query.filter_by(author=author).all()
+            books = Books.query.filter_by(author=author).paginate(page=page, per_page=10)
         elif search.ways.data == "位置":
             position = search.string.data
-            books = Books.query.filter_by(position=position).all()
-        return render_template("research_page.html", search=search, books=books,
-                               logged_in=current_user.is_authenticated)
-    return render_template("research_page.html", search=search, books=books, logged_in=current_user.is_authenticated)
+            books = Books.query.filter_by(position=position).paginate(page=page, per_page=10)
+    start_page = max(1, page - 2)
+    end_page = min(books.pages, page + 2)
+
+    return render_template("research_page.html", search=search, books=books,start_page=start_page, end_page=end_page, logged_in=current_user.is_authenticated)
 
 
 # 需要登入
@@ -184,6 +193,7 @@ def add():
     global session
     available_id = get_available_id()
     isbn_add = Isbnadd()
+    classusers = Classuser.query.all()
     if 'isbn_input' in session:
         if session['isbn_input']:
             if session['isbn_input']['ISBN'] is None:
@@ -206,15 +216,15 @@ def add():
                               author="沒有搜尋到",
                               position="沒有搜尋到")
     else:
-        addbook = Addbook(id=available_id,)
+        addbook = Addbook(id=available_id )
+        addbook.position.choices = [(user.class_, user.class_) for user in classusers]
     if isbn_add.validate_on_submit():
         info = Bookinfo(isbn_add.ISBN_input.data)
         info.book_info()
         session['isbn_input'] = info.info_list
-        return redirect(
-            url_for("add", isbn_add=isbn_add, addbook=addbook,
-                    logged_in=current_user.is_authenticated))
+        return redirect(url_for("add"))
     if addbook.validate_on_submit():
+
         books = Books(
             id=available_id,
             ISBN_number=addbook.ISBN.data,
@@ -227,9 +237,7 @@ def add():
         db.session.commit()
         session = {}
         flash("新增完成！")
-        return redirect(
-            url_for("add", isbn_add=isbn_add, addbook=addbook,
-                    logged_in=current_user.is_authenticated))
+        return redirect(url_for("add"))
     return render_template("add_page.html", isbn_add=isbn_add, addbook=addbook,
                            logged_in=current_user.is_authenticated)
 
@@ -248,47 +256,49 @@ def delete(book_id):
 
 
 # 需要登入
-@app.route("/borrow", methods=["GET", "POST"])
+@app.route("/class_borrow", methods=["GET", "POST"])
 @login_required
-def borrow():
-    borrowerbook = Borrowerbook()
+def class_borrow():
     bookposition = Bookposition()
-    current_position = None
-    if current_user.name == "1":
-        current_position = "圖書室"
-    elif current_user.name == "2":
-        current_position = "暴龍班"
-    elif current_user.name == "3":
-        current_position = "翼手龍班"
-    elif current_user.name == "4":
-        current_position = "三角龍班"
+    current_position = current_user.name
     books = Books.query.filter_by(position=current_position).all()
     if bookposition.validate_on_submit():
-        print("Hello")
         bookmove = Books.query.filter_by(id=bookposition.book_number.data).first()
         if bookmove:
             bookmove.position = current_position
             db.session.commit()
-            return redirect(url_for("borrow"))
+            return redirect(url_for("class_borrow"))
         else:
             flash("沒有搜尋到該本書籍")
-    elif borrowerbook.validate_on_submit():
+    return render_template("class_borrow_page.html", bookposition=bookposition, books=books,
+                           logged_in=current_user.is_authenticated)
+
+
+# 需要登入
+@app.route("/student_borrow", methods=["GET", "POST"])
+@login_required
+def student_borrow():
+    borrowerbook = Borrowerbook()
+    studentform = Studentform(class_id=current_user.class_)
+    students = Students.query.filter_by(class_id=current_user.id).all()
+    if borrowerbook.validate_on_submit():
         print("A")
         bookmove = Books.query.filter_by(id=borrowerbook.book_number.data).first()
         if bookmove:
             bookmove.borrower = f"{current_user.name}-{borrowerbook.student_number.data}"
             db.session.commit()
-            return redirect(url_for("borrow"))
+            return redirect(url_for("student_borrow"))
         else:
             flash("沒有搜尋到該本書籍")
-    return render_template("borrow_page.html", bookposition=bookposition, books=books, borrowerbook=borrowerbook,
+    return render_template("student_borrow.html", studentform=studentform,
+                           students=students, borrowerbook=borrowerbook,
                            logged_in=current_user.is_authenticated)
 
 
 @app.route("/student", methods=["GET", "POST"])
 @login_required
 def student():
-    studentform = Studentform(class_id=current_user.name)
+    studentform = Studentform(class_id=current_user.class_)
     students = Students.query.filter_by(class_id=current_user.id).all()
     books = Books.query.filter_by().all()
     if studentform.validate_on_submit():
@@ -301,7 +311,7 @@ def student():
             db.session.commit()
             students = Students.query.filter_by(class_id=current_user.id).all()
             print(students)
-            return render_template("student_manager.html", borrowerbook=borrowerbook, students=students,
+            return render_template("student_manager.html", students=students,
                                    studentform=studentform,
                                    logged_in=current_user.is_authenticated)
         except IntegrityError:
@@ -353,11 +363,14 @@ def delete_student(student_number):
 @app.route("/usermanage", methods=['GET', 'POST'])
 @login_required
 def usermanage():
+    if current_user.name != 'admin':
+        flash("您沒有權限訪問管理員資料設定")
+        return redirect(url_for('home'))
     userform = Userform()
     classusers = Classuser.query.filter_by().all()
     if userform.validate_on_submit():
         try:
-            classuser = Classuser(name=userform.name.data, password=userform.password.data)
+            classuser = Classuser(class_=userform.class_.data,name=userform.name.data, password=userform.password.data)
             db.session.add(classuser)
             db.session.commit()
             flash("新增成功")
@@ -367,6 +380,7 @@ def usermanage():
             flash("帳號重複")
     return render_template("user_page.html", userform=userform, classusers=classusers,
                            logged_in=current_user.is_authenticated)
+
 
 
 @app.route("/login", methods=['GET', 'POST'])

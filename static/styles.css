@@ -7,91 +7,234 @@
 
 }
 
-.title {
-padding-top:10px;
-    margin:10px;
-    border-radius:20px;
-    border: 2px double #DFE0F5;
+
+
+.nav {
+    background:#004648;
+    padding: 1%;
+    color:white;
+    align-items: center;
 }
 
-
-.picture img{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 60%;
+.nav-link {
+    display: inline-block;
+    margin-right: 1%;
 }
 
-.container{
-    padding-top: 20px;
-    padding-bottom: 10px;
-    text-align:center;
-    font-size:15px
+#icon{
+  width:100px;
 }
-
-
-
 
 a:link,a:visited  {
-  color: #4D4D4D;
+  color:white ;
   background-color: transparent;
   text-decoration: none !important;
 }
 
-.search_icon{
-    padding-bottom: 10px;
-    padding-right: 10px;
+#carouselExampleFade{
+    margin-top:5%;
 }
 
-h1{
- display: inline-block;
- padding-top: 30px;
- padding-bottom: 10px;
- text-align:center;
- border-bottom: 0.5px dotted #E9F0F6;
- color:#4D4D4D;
-}
-
-p{
-    padding-left: 20px;
-    text-align:center;
-    font-size:20px
-}
-
-
-.search_form{
-    padding-top: 5px;
-    padding-bottom: 5px;
+#login_form{
+    margin-top:15%;
+    position:relative;
+    margin-left: auto;
+    margin-right: auto;
+    width:500px;
+    height:300px;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px;
+    border-color: #004648;
+    background-image:url("躁點圖.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
 
 }
 
-.add_form{
-    padding-top: 5px;
-    padding-bottom: 5px;
+#login_form_title{
+    background-color: #004648;
+    height:40px;
+    color:white;
+    font-weight:400;
+    line-height: 30px;
 
 }
 
-.login_form{
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
+#login_form_item{
+    margin-top:5%;
+    color: #004648 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+     align-items: center;
 }
 
-.tittle-bar{
-    margin:20px;
-    border-radius:50px;
-    background:#E9F0F6;
+#login_form_item input {
+    margin-top: 5%;
 }
 
-
-#book_forms {
- text-align:left;
+.btn-custom {
+    background-color: #004648 !important;
+    border-color: #004648 !important;
+    color:white !important;
 }
 
-#all-books {
+.search_title{
+  margin-top:5%;
+  margin-bottom:5%;
+  color:#004648;
+}
 
+#search_form{
+margin-top:5%;
+margin-bottom:5%;
+
+}
+
+.search_form_item{
+  text-align:center;
+}
+
+.form-control-custom{
+    width:200px;
+}
+
+.show_books{
+    padding-top: 5%;
+    border-style: solid;
+    border-width: 2px;
     border-radius: 30px;
-    background-color:#E9F0F6;
-    border: 1px solid white;
+    border-color: #004648;
+}
+
+#books_pagination{
+    margin-top:5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+     align-items: center;
+}
+
+
+
+
+.row-book{
+    margin-top:5%x;
+
+}
+
+
+
+.add_title{
+    margin-top:5%;
+    color:#004648;
+}
+
+
+#add_detail_form{
+    position:relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:1%;
+    padding-top:2%;
+    width:80%;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px;
+    border-color: #004648;
+
+}
+
+.form-control-plaintext{
+   width:100px;
+}
+
+.borrow_title{
+    color:#004648;
+}
+
+#class_borrow_form{
+  margin-top:5%;
+  margin-bottom:5%;
+}
+
+#student_borrow_form{
+  margin-top:5%;
+  margin-bottom:5%;
+}
+
+#class_books-items {
+    margin-top:5%;
+    padding-top:5%;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 30px;
+    border-color: #004648;
+}
+
+#student_borrow_books{
+    margin-top:5%;
+    padding-top: 20px;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 30px;
+    border-color: #004648;
+}
+
+
+
+.student_title{
+    margin-top:5%;
+    color: #004648;
+
+}
+#students_form{
+    position:relative;
+    margin-top:5%;
+    margin-bottom:5%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#students_data{
+    position:relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:2%;
+    padding-top:2%;
+    width:90%;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px;
+    border-color: #004648;
+}
+
+
+.user_title{
+   margin-top:5%;
+    color: #004648;
+}
+
+#user_form{
+ position:relative;
+    margin-left: auto;
+    margin-right: auto;
+   margin-top:5%;
+
+}
+
+
+#user_data{
+    position:relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:2%;
+    padding-top:2%;
+    width:90%;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px;
+    border-color: #004648;
 }
