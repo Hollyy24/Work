@@ -8,25 +8,64 @@
 }
 
 
-
-.nav {
+nav {
+     position: relative;
+    margin: 0;
+    padding: 0;
     background:#004648;
-    padding: 1%;
-    color:white;
-    align-items: center;
+    color:gold;
 }
 
-.nav-link {
-    display: inline-block;
-    margin-right: 1%;
+.menu{
+   display:flex;
+   list-style:none;
+    align-items: center;
+    padding-left:5px;
+}
+.menu-item{
+    padding-right:5%;
+    padding-left:5%;
+    justify-content:space-between;
+    border-right: 2px solid gray;
+}
+
+.menu-item:hover{
+    background-color:#44533f;
+    cursor:pointer;
+}
+
+.menu-item:hover .menu-item-sub{
+    padding-right:1%;
+    padding-left:1%;
+    position: absolute;
+    display:block;
+    background-color:#004648;
+    justify-content: center;
+}
+
+.menu-item-sub{
+    display: none; /* 子菜單默認隱藏 */
+    list-style: none;
+    background-color: #fff;
+    z-index: 2;
+    justify-content: center;
 }
 
 #icon{
-  width:100px;
+    margin-right: auto;
+    max-width: 50px;
+    height: auto;
 }
 
+.text-runner{
+position: absolute;
+   color:#004648;
+    animation: change-color 30s infinite;
+}
+
+
 a:link,a:visited  {
-  color:white ;
+  color:gold ;
   background-color: transparent;
   text-decoration: none !important;
 }
@@ -237,4 +276,15 @@ margin-bottom:5%;
     border-width: 2px;
     border-radius: 10px;
     border-color: #004648;
+}
+
+
+
+@keyframes change-color{
+    0% {
+    transform:translate(100vw);
+    }
+    100% {
+    transform:translate(-100vw);
+    }
 }

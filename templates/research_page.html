@@ -48,13 +48,14 @@
 <div class="container show_books">
     {% for book in books.items %}
     <div class="row">
-        <div class="col-2"><strong>編號</strong><br>{{ book.id}}</div>
+        <div class="col-1"><strong>編號</strong><br>{{ book.id}}</div>
         <div class="col-2"><strong>ＩＳＢＮ碼</strong><br>{{ book.ISBN_number}}</div>
         <div class="col-2"><strong>書名</strong><br>{{ book.title}}</div>
         <div class="col-2"><strong>作者</strong><br>{{ book.author}}</div>
         <div class="col-2"><strong>位置</strong><br>{{ book.position}}</div>
         {% if logged_in %}
-        <div class="col-2"><strong>借閱人</strong><br>{{ book.borrower[2:]}}</div>
+        <div class="col-1"><strong>借閱人</strong><br>{{ book.borrower[2:]}}</div>
+        <div class="col-1"><strong>備註</strong><br><a href="{{ url_for('delete',book_id=book.id ) }}">刪除</a></div>
         {% endif %}
     </div>
     <hr>

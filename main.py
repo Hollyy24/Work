@@ -4,7 +4,7 @@ import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask import render_template, redirect, url_for, Flask, flash, request
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap4
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 from flask_wtf import FlaskForm
@@ -18,7 +18,7 @@ from sqlalchemy.exc import IntegrityError
 from helper import Bookinfo
 
 app = Flask(__name__)
-Bootstrap(app)
+Bootstrap4(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -31,7 +31,9 @@ class Base(DeclarativeBase):
 
 
 app.config["SECRET_KEY"] = os.getenv('MYKEY')
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///books_manager.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///booklibrary.db"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
@@ -282,7 +284,6 @@ def student_borrow():
     studentform = Studentform(class_id=current_user.class_)
     students = Students.query.filter_by(class_id=current_user.id).all()
     if borrowerbook.validate_on_submit():
-        print("A")
         bookmove = Books.query.filter_by(id=borrowerbook.book_number.data).first()
         if bookmove:
             bookmove.borrower = f"{current_user.name}-{borrowerbook.student_number.data}"
@@ -306,7 +307,6 @@ def student():
             class_id=current_user.id,
             student_number=f"{current_user.id}-{studentform.number.data}")
         try:
-
             db.session.add(student)
             db.session.commit()
             students = Students.query.filter_by(class_id=current_user.id).all()
@@ -335,7 +335,7 @@ def returnoffice(book_id):
         flash("退還成功！")
     else:
         flash("沒有搜尋到該本書籍")
-    return redirect(url_for("borrow"))
+    return redirect(url_for("class_borrow"))
 
 
 @app.route("/returnbook/<string:book_id>", methods=["GET", "POST"])
@@ -344,7 +344,7 @@ def returnbook(book_id):
     books.borrower = "---"
     db.session.commit()
     flash("退還成功！")
-    return redirect(url_for('borrow'))
+    return redirect(url_for('student_borrow'))
 
 
 @app.route("/delete_student/<string:student_number>", methods=["GET", "POST"])
@@ -390,15 +390,16 @@ def login():
 
         user = Classuser.query.filter_by(name=userlogin.name.data, password=userlogin.password.data).first()
         if user:
-            print("1")
             login_user(user)
             return redirect(url_for('home', logged_in=current_user.is_authenticated))
         else:
-            print("2")
             userlogin = User_login(name="無此帳號", password="無此帳號")
             return render_template("login_page.html", userlogin=userlogin, logged_in=current_user.is_authenticated)
 
     return render_template("login_page.html", userlogin=userlogin, logged_in=current_user.is_authenticated)
+
+
+
 
 
 @app.route("/logout")

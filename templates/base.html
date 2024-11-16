@@ -12,21 +12,38 @@
 
 </head>
 <body>
-<nav class="nav">
-    <a href="{{ url_for('home') }}"><img class="nav-link" id="icon" src="static/小標誌.png"></a>｜
-    {% if logged_in %}
-    <a  class="nav-link active" href="{{url_for('log_out') }}"> 管理員登出</a>｜
-    {% else %}
-    <a  class="nav-link active" href="{{url_for('login') }}"> 管理員登入 </a>｜
-    {% endif %}
-    <a class="nav-link active"  href="{{url_for('research') }}"> 館藏搜尋</a>｜
-    <a  class="nav-link active" href="{{url_for('add') }}"> 書籍管理</a>｜
-    <a  class="nav-link active" href="{{url_for('class_borrow') }}"> 班級借閱 </a>｜
-    <a  class="nav-link active" href="{{url_for('student_borrow') }}"> 學生借閱 </a>｜
-    <a  class="nav-link active" href="{{url_for('student') }}"> 學生資料設定 </a>｜
-    <a  class="nav-link active" href="{{url_for('usermanage')}}"> 管理員資料設定 </a>｜
-</nav>
 
+<nav>
+    <ul class="menu">
+        <a href="{{ url_for('home') }}">
+            <img id="icon" src="static/小標誌.png">
+        </a>
+        <li class="menu-item">
+            <a  href="{{url_for('research') }}">館藏搜尋</a>
+        </li>
+        {% if logged_in %}
+        <li class="menu-item">管理員設定
+            <ul class="menu-item-sub">
+            <li><a class="nav-link"  href="{{url_for('usermanage')}}"> 管理員資料設定 </a></li>
+            <li><a class="nav-link"  href="{{url_for('log_out') }}"> 管理員登出</a></li>
+            </ul>
+        </li>
+        {% else %}
+        <li class="menu-item"><a  href="{{url_for('login') }}"> 管理員登入 </a></li>
+        {% endif %}
+        <li class="menu-item">資料處理
+            <ul class="menu-item-sub" >
+                <li><a  class="nav-link" href="{{url_for('add') }}"> 書籍管理</a></li>
+                <li><a  class="nav-link" href="{{url_for('class_borrow') }}"> 班級借閱 </a></li>
+                <li><a  class="nav-link" href="{{url_for('student_borrow') }}"> 學生借閱 </a></li>
+                <li><a  class="nav-link" href="{{url_for('student') }}"> 學生資料設定 </a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+<div class="text-runner">
+    <p>訪客可使用館藏搜尋功能，管理員、教師請登入</p>
+</div>
 
 {% block content%}
 {% endblock %}
