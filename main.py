@@ -15,7 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Integer, func
 from sqlalchemy.orm import mapped_column, Mapped, DeclarativeBase
 from sqlalchemy.exc import IntegrityError
-from helper import Bookinfo
+
 
 app = Flask(__name__)
 Bootstrap4(app)
